@@ -41,8 +41,8 @@ import Cocoa
 
 // Split a large integer into bytes.
 extension Int {
-    func splitBytes(endianness: CStruct.Endianness, size: Int) -> UInt8[] {
-        var bytes = UInt8[]()
+    func splitBytes(endianness: CStruct.Endianness, size: Int) -> [UInt8] {
+        var bytes = [UInt8]()
         var shift: Int
         var step: Int
         if endianness == .LittleEndian {
@@ -52,7 +52,7 @@ extension Int {
             shift = (size - 1) * 8
             step = -8
         }
-        for count in 0..size {
+        for count in 0..<size {
             bytes.append(UInt8((self >> shift) & 0xff))
             shift += step
         }
@@ -60,8 +60,8 @@ extension Int {
     }
 }
 extension UInt {
-    func splitBytes(endianness: CStruct.Endianness, size: Int) -> UInt8[] {
-        var bytes = UInt8[]()
+    func splitBytes(endianness: CStruct.Endianness, size: Int) -> [UInt8] {
+        var bytes = [UInt8]()
         var shift: Int
         var step: Int
         if endianness == .LittleEndian {
@@ -71,7 +71,7 @@ extension UInt {
             shift = Int((size - 1) * 8)
             step = -8
         }
-        for count in 0..size {
+        for count in 0..<size {
             bytes.append(UInt8((self >> UInt(shift)) & 0xff))
             shift = shift + step
         }
@@ -129,7 +129,7 @@ class CStruct: NSObject {
         case PackPointer
     }
     
-    var opStream = Ops[]()
+    var opStream = [Ops]()
     
     let bytesForValue = [
         Ops.SkipByte:       1,
@@ -145,7 +145,7 @@ class CStruct: NSObject {
         Ops.PackUInt64:     8,
         Ops.PackFloat:      4,
         Ops.PackDouble:     8,
-        Ops.PackPointer:    sizeof(CConstVoidPointer),
+        Ops.PackPointer:    sizeof(UnsafePointer<UInt>),
     ]
     
     let PAD_BYTE = UInt8(0)
@@ -165,25 +165,25 @@ class CStruct: NSObject {
     
     // Unpacking.
     
-    func unpack(data: NSData, format: String, error: NSErrorPointer) -> AnyObject[]? {
+    func unpack(data: NSData, format: String, error: NSErrorPointer) -> [AnyObject]? {
         if !self.parseFormat(format, error: error) {
             return nil
         }
         return self.unpack(data, error: error)
     }
-    
-    func unpack(data: NSData, error: NSErrorPointer) -> AnyObject[]? {
+
+    func unpack(data: NSData, error: NSErrorPointer) -> [AnyObject]? {
         
-        var values = AnyObject[]()
+        var values = [AnyObject]()
         var index = 0
         var alignment = true
         var endianness = self.platformEndianness
         
         // Set error message and return nil.
-        func failure(message: String) -> AnyObject[]? {
-            if error {
+        func failure(message: String) -> [AnyObject]? {
+            if (error != nil) {
                 error.memory = NSError(domain: ERROR_DOMAIN,
-                    code: Error.Unpacking.toRaw(),
+                    code: Error.Unpacking.rawValue,
                     userInfo: [NSLocalizedDescriptionKey: message])
             }
             return nil
@@ -201,13 +201,13 @@ class CStruct: NSObject {
         }
         
         // Read UInt8 values from data.
-        func readBytes(count: Int) -> UInt8[]? {
-            var bytes = UInt8[]()
+        func readBytes(count: Int) -> [UInt8]? {
+            var bytes = [UInt8]()
             if index + count > data.length {
                 return nil
             }
             let ptr = UnsafePointer<UInt8>(data.bytes)
-            let unsafeBytes = UnsafeArray<UInt8>(start:ptr + index, length:count)
+            let unsafeBytes = UnsafeBufferPointer<UInt8>(start:ptr + index, count:count)
             index += count
             for byte in unsafeBytes {
                 bytes.append(byte)
@@ -216,7 +216,7 @@ class CStruct: NSObject {
         }
         
         // Create integer from bytes.
-        func intFromBytes(bytes: UInt8[]) -> Int {
+        func intFromBytes(bytes: [UInt8]) -> Int {
             var i: Int = 0
             for byte in endianness == .LittleEndian ? bytes.reverse() : bytes {
                 i <<= 8
@@ -224,7 +224,7 @@ class CStruct: NSObject {
             }
             return i
         }
-        func uintFromBytes(bytes: UInt8[]) -> UInt {
+        func uintFromBytes(bytes: [UInt8]) -> UInt {
             var i: UInt = 0
             for byte in endianness == .LittleEndian ? bytes.reverse() : bytes {
                 i <<= 8
@@ -317,25 +317,25 @@ class CStruct: NSObject {
     
     // Packing.
     
-    func pack(values: AnyObject[], format: String, error: NSErrorPointer) -> NSData? {
+    func pack(values: [AnyObject], format: String, error: NSErrorPointer) -> NSData? {
         if !self.parseFormat(format, error: error) {
             return nil
         }
         return self.pack(values, error: error)
     }
     
-    func pack(values: AnyObject[], error: NSErrorPointer) -> NSData? {
+    func pack(values: [AnyObject], error: NSErrorPointer) -> NSData? {
         
-        var bytes = UInt8[]()
+        var bytes = [UInt8]()
         var index = 0
         var alignment = true
         var endianness = self.platformEndianness
         
         // Set error message and return nil.
         func failure(message: String) -> NSData? {
-            if error {
+            if (error != nil) {
                 error.memory = NSError(domain: ERROR_DOMAIN,
-                    code: Error.Packing.toRaw(),
+                    code: Error.Packing.rawValue,
                     userInfo: [NSLocalizedDescriptionKey: message])
             }
             return nil
@@ -389,7 +389,8 @@ class CStruct: NSObject {
                     
                 case .PackChar:
                     if let str = rawValue as? String {
-                        let codePoint = str.utf16[0]
+                        let utf16view = str.utf16
+                        let codePoint = Int(utf16view[utf16view.startIndex])
                         if codePoint < 128 {
                             bytes.append(UInt8(codePoint))
                         } else {
@@ -504,8 +505,8 @@ class CStruct: NSObject {
                     
                 case .PackPointer:
                     if let value = rawValue as? UInt {
-                        padAlignment(sizeof(CConstVoidPointer))
-                        bytes.extend(value.splitBytes(endianness, size: sizeof(CConstVoidPointer)))
+                        padAlignment(sizeof(UnsafePointer<UInt>))
+                        bytes.extend(value.splitBytes(endianness, size: sizeof(UnsafePointer<UInt>)))
                     } else {
                         return failure("cannot convert argument to UInt")
                     }
@@ -569,7 +570,7 @@ class CStruct: NSObject {
             // If we have a repeat count we expect a format character.
             if repeat > 0 {
                 // Add one op for each repeat count.
-                for i in 0..repeat {
+                for i in 0..<repeat {
                     switch c {
                     case "x":       opStream.append(.SkipByte)
                     case "c":       opStream.append(.PackChar)
@@ -588,9 +589,9 @@ class CStruct: NSObject {
                     case "p":       opStream.append(.PackPString)
                     case "P":       opStream.append(.PackPointer)
                     default:
-                        if error {
+                        if (error != nil) {
                             error.memory = NSError(domain: ERROR_DOMAIN,
-                                code: Error.Parsing.toRaw(),
+                                code: Error.Parsing.rawValue,
                                 userInfo: [NSLocalizedDescriptionKey: "bad character in format"])
                         }
                         return false

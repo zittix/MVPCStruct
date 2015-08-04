@@ -12,6 +12,7 @@
 		05A8B6C2194B1718006366DF /* MVPCStruct.h in Headers */ = {isa = PBXBuildFile; fileRef = 05A8B6C1194B1718006366DF /* MVPCStruct.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		05A8B6C8194B1718006366DF /* MVPCStruct.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 05A8B6BC194B1718006366DF /* MVPCStruct.framework */; };
 		05A8B6D9194B1755006366DF /* CStruct.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05A8B6D8194B1755006366DF /* CStruct.swift */; };
+		4BBF61AA1B7079F500821C5F /* CStruct.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05A8B6D8194B1755006366DF /* CStruct.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -226,6 +227,7 @@
 			files = (
 				058E72AE194B36DD002168A2 /* PackTests.swift in Sources */,
 				058E72B0194B3715002168A2 /* UnpackTests.swift in Sources */,
+				4BBF61AA1B7079F500821C5F /* CStruct.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
