@@ -18,6 +18,18 @@ class PackTests: XCTestCase {
     override func tearDown() {
         super.tearDown()
     }
+    
+    func testBooleanPack() {
+        var error:NSError?
+        
+        let packer = CStruct()
+        let booleanFacit = NSData(bytes: [0x01, 0x01, 0x00, 0x01] as [UInt8], length: 4)
+        if let result = packer.pack([true, true, false, true], format: "????", error: &error) {
+            XCTAssertEqual(result, booleanFacit)
+        } else {
+            XCTFail("result is nil")
+        }
+    }
 
     func testHello() {
         let facit = "Hello".dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: false)
@@ -113,5 +125,4 @@ class PackTests: XCTestCase {
             XCTFail("bad format should return nil")
         }
     }
-
 }
