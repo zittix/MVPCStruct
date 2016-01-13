@@ -6,7 +6,7 @@
 //  Copyright (c) 2014 AutoMac. All rights reserved.
 //
 
-import Cocoa
+import Foundation
 
 //      BYTE ORDER      SIZE            ALIGNMENT
 //  @   native          native          native

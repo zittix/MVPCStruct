@@ -9,7 +9,6 @@
 /* Begin PBXBuildFile section */
 		058E72AE194B36DD002168A2 /* PackTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 058E72AD194B36DD002168A2 /* PackTests.swift */; };
 		058E72B0194B3715002168A2 /* UnpackTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 058E72AF194B3715002168A2 /* UnpackTests.swift */; };
-		05A8B6C2194B1718006366DF /* MVPCStruct.h in Headers */ = {isa = PBXBuildFile; fileRef = 05A8B6C1194B1718006366DF /* MVPCStruct.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		05A8B6C8194B1718006366DF /* MVPCStruct.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 05A8B6BC194B1718006366DF /* MVPCStruct.framework */; };
 		05A8B6D9194B1755006366DF /* CStruct.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05A8B6D8194B1755006366DF /* CStruct.swift */; };
 		4BBF61AA1B7079F500821C5F /* CStruct.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05A8B6D8194B1755006366DF /* CStruct.swift */; };
@@ -30,7 +29,6 @@
 		058E72AF194B3715002168A2 /* UnpackTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UnpackTests.swift; sourceTree = "<group>"; };
 		05A8B6BC194B1718006366DF /* MVPCStruct.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = MVPCStruct.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		05A8B6C0194B1718006366DF /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		05A8B6C1194B1718006366DF /* MVPCStruct.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MVPCStruct.h; sourceTree = "<group>"; };
 		05A8B6C7194B1718006366DF /* MVPCStructTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MVPCStructTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		05A8B6CD194B1718006366DF /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		05A8B6D8194B1755006366DF /* CStruct.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CStruct.swift; sourceTree = "<group>"; };
@@ -76,7 +74,6 @@
 		05A8B6BE194B1718006366DF /* MVPCStruct */ = {
 			isa = PBXGroup;
 			children = (
-				05A8B6C1194B1718006366DF /* MVPCStruct.h */,
 				05A8B6D8194B1755006366DF /* CStruct.swift */,
 				05A8B6BF194B1718006366DF /* Supporting Files */,
 			);
@@ -116,7 +113,6 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				05A8B6C2194B1718006366DF /* MVPCStruct.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -279,10 +275,11 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				METAL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
-				SDKROOT = macosx;
+				SDKROOT = iphoneos9.2;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
@@ -318,9 +315,10 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				METAL_ENABLE_DEBUG_INFO = NO;
-				SDKROOT = macosx;
+				SDKROOT = iphoneos9.2;
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
 			};
@@ -338,11 +336,13 @@
 				FRAMEWORK_VERSION = A;
 				INFOPLIST_FILE = MVPCStruct/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "se.automac.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
 		};
@@ -358,10 +358,12 @@
 				FRAMEWORK_VERSION = A;
 				INFOPLIST_FILE = MVPCStruct/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "se.automac.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
 		};
