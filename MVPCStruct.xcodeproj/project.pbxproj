@@ -12,6 +12,8 @@
 		05A8B6C8194B1718006366DF /* MVPCStruct.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 05A8B6BC194B1718006366DF /* MVPCStruct.framework */; };
 		05A8B6D9194B1755006366DF /* CStruct.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05A8B6D8194B1755006366DF /* CStruct.swift */; };
 		4BBF61AA1B7079F500821C5F /* CStruct.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05A8B6D8194B1755006366DF /* CStruct.swift */; };
+		4ED039551C466CA600F2B22D /* MVPCStruct.h in Sources */ = {isa = PBXBuildFile; fileRef = 4ED039541C466C9500F2B22D /* MVPCStruct.h */; };
+		4ED039561C466CC200F2B22D /* MVPCStruct.h in Headers */ = {isa = PBXBuildFile; fileRef = 4ED039541C466C9500F2B22D /* MVPCStruct.h */; settings = {ATTRIBUTES = (Public, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -32,6 +34,7 @@
 		05A8B6C7194B1718006366DF /* MVPCStructTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MVPCStructTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		05A8B6CD194B1718006366DF /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		05A8B6D8194B1755006366DF /* CStruct.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CStruct.swift; sourceTree = "<group>"; };
+		4ED039541C466C9500F2B22D /* MVPCStruct.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.objj.h; path = MVPCStruct.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -75,6 +78,7 @@
 			isa = PBXGroup;
 			children = (
 				05A8B6D8194B1755006366DF /* CStruct.swift */,
+				4ED039541C466C9500F2B22D /* MVPCStruct.h */,
 				05A8B6BF194B1718006366DF /* Supporting Files */,
 			);
 			path = MVPCStruct;
@@ -113,6 +117,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4ED039561C466CC200F2B22D /* MVPCStruct.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -216,6 +221,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				05A8B6D9194B1755006366DF /* CStruct.swift in Sources */,
+				4ED039551C466CA600F2B22D /* MVPCStruct.h in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
