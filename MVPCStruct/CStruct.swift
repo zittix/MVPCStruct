@@ -52,7 +52,7 @@ extension Int {
             shift = (size - 1) * 8
             step = -8
         }
-        for count in 0..<size {
+        for _ in 0..<size {
             bytes.append(UInt8((self >> shift) & 0xff))
             shift += step
         }
@@ -71,7 +71,7 @@ extension UInt {
             shift = Int((size - 1) * 8)
             step = -8
         }
-        for count in 0..<size {
+        for _ in 0..<size {
             bytes.append(UInt8((self >> UInt(shift)) & 0xff))
             shift = shift + step
         }
@@ -81,14 +81,15 @@ extension UInt {
 
 
 class CStruct: NSObject {
-    
-    enum Error: Int {
-        case Parsing = -1
-        case Packing = -2
-        case Unpacking = -3
+	
+	
+	
+    enum Error: ErrorType {
+        case Parsing(reason: String)
+        case Packing(reason: String)
+		case Unpacking(reason: String)
     }
-    let ERROR_DOMAIN = "se.gu.it.GUStructPacker"
-    
+	
     enum Endianness {
         case LittleEndian
         case BigEndian
@@ -154,40 +155,26 @@ class CStruct: NSObject {
     return .LittleEndian
     }
     
-    convenience init(format: String) {
+    convenience init(format: String) throws {
         self.init()
-        var error: NSError?
-        if !self.parseFormat(format, error: &error) {
-            assert(false, "format string parsing error")
-        }
+		
+		try self.parseFormat(format)
     }
     
     
     // Unpacking.
     
-    func unpack(data: NSData, format: String, error: NSErrorPointer) -> [AnyObject]? {
-        if !self.parseFormat(format, error: error) {
-            return nil
-        }
-        return self.unpack(data, error: error)
+    func unpack(data: NSData, format: String) throws -> [AnyObject] {
+        try self.parseFormat(format)
+        return try self.unpack(data)
     }
 
-    func unpack(data: NSData, error: NSErrorPointer) -> [AnyObject]? {
-        
+    func unpack(data: NSData) throws -> [AnyObject] {
         var values = [AnyObject]()
         var index = 0
         var alignment = true
         var endianness = self.platformEndianness
-        
-        // Set error message and return nil.
-        func failure(message: String) -> [AnyObject]? {
-            if (error != nil) {
-                error.memory = NSError(domain: ERROR_DOMAIN,
-                    code: Error.Unpacking.rawValue,
-                    userInfo: [NSLocalizedDescriptionKey: message])
-            }
-            return nil
-        }
+
         
         // If alignment is requested, skip pad bytes until alignment is
         // satisfied.
@@ -218,7 +205,7 @@ class CStruct: NSObject {
         // Create integer from bytes.
         func intFromBytes(bytes: [UInt8]) -> Int {
             var i: Int = 0
-            for byte in endianness == .LittleEndian ? bytes.reverse() : bytes {
+            for byte in endianness == .LittleEndian ? Array(bytes.reverse()) : bytes {
                 i <<= 8
                 i |= Int(byte)
             }
@@ -226,7 +213,7 @@ class CStruct: NSObject {
         }
         func uintFromBytes(bytes: [UInt8]) -> UInt {
             var i: UInt = 0
-            for byte in endianness == .LittleEndian ? bytes.reverse() : bytes {
+            for byte in endianness == .LittleEndian ? Array(bytes.reverse()) : bytes {
                 i <<= 8
                 i |= UInt(byte)
             }
@@ -258,10 +245,10 @@ class CStruct: NSObject {
                 assert(false, "cstring/pstring unimplemented")
                 
             case .SkipByte:
-                if let bytes = readBytes(1) {
+                if let _ = readBytes(1) {
                     // Discard.
                 } else {
-                    return failure("not enough data for format")
+                    throw Error.Unpacking(reason: "not enough data for format")
                 }
             default:
                 let bytesToUnpack = bytesForValue[op]!
@@ -305,7 +292,7 @@ class CStruct: NSObject {
                     }
                     
                 } else {
-                    return failure("not enough data for format")
+                    throw Error.Unpacking(reason: "not enough data for format")
                 }
             }
             
@@ -317,30 +304,17 @@ class CStruct: NSObject {
     
     // Packing.
     
-    func pack(values: [AnyObject], format: String, error: NSErrorPointer) -> NSData? {
-        if !self.parseFormat(format, error: error) {
-            return nil
-        }
-        return self.pack(values, error: error)
+    func pack(values: [AnyObject], format: String) throws -> NSData {
+        try self.parseFormat(format)
+        return try self.pack(values)
     }
     
-    func pack(values: [AnyObject], error: NSErrorPointer) -> NSData? {
-        
+    func pack(values: [AnyObject]) throws -> NSData {
         var bytes = [UInt8]()
         var index = 0
         var alignment = true
         var endianness = self.platformEndianness
-        
-        // Set error message and return nil.
-        func failure(message: String) -> NSData? {
-            if (error != nil) {
-                error.memory = NSError(domain: ERROR_DOMAIN,
-                    code: Error.Packing.rawValue,
-                    userInfo: [NSLocalizedDescriptionKey: message])
-            }
-            return nil
-        }
-        
+		
         // If alignment is requested, emit pad bytes until alignment is
         // satisfied.
         func padAlignment(size: Int) {
@@ -358,7 +332,7 @@ class CStruct: NSObject {
                 
             case .Stop:
                 if index != values.count {
-                    return failure("expected \(index) items for packing, got \(values.count)")
+                    throw Error.Packing(reason: "expected \(index) items for packing, got \(values.count)")
                 } else {
                     return NSData(bytes: bytes, length: bytes.count)
                 }
@@ -381,8 +355,8 @@ class CStruct: NSObject {
             default:
                 // No control op found so pop the next value.
                 if index >= values.count {
-                    return failure("expected at least \(index) items for packing, got \(values.count)")
-                }
+                    throw Error.Packing(reason: "expected at least \(index) items for packing, got \(values.count)")
+				}
                 let rawValue: AnyObject = values[index++]
                 
                 switch op {
@@ -394,10 +368,10 @@ class CStruct: NSObject {
                         if codePoint < 128 {
                             bytes.append(UInt8(codePoint))
                         } else {
-                            return failure("char format requires String of length 1")
+                            throw Error.Packing(reason: "char format requires String of length 1")
                         }
                     } else {
-                        return failure("char format requires String of length 1")
+                        throw Error.Packing(reason: "char format requires String of length 1")
                     }
                     
                 case .PackInt8:
@@ -405,21 +379,21 @@ class CStruct: NSObject {
                         if value >= -0x80 && value <= 0x7f {
                             bytes.append(UInt8(value & 0xff))
                         } else {
-                            return failure("value outside valid range of Int8")
+                            throw Error.Packing(reason: "value outside valid range of Int8")
                         }
                     } else {
-                        return failure("cannot convert argument to Int")
+                        throw Error.Packing(reason: "cannot convert argument to Int")
                     }
                     
                 case .PackUInt8:
                     if let value = rawValue as? UInt {
                         if value > 0xff {
-                            return failure("value outside valid range of UInt8")
+                            throw Error.Packing(reason: "value outside valid range of UInt8")
                         } else {
                             bytes.append(UInt8(value))
                         }
                     } else {
-                        return failure("cannot convert argument to UInt")
+                        throw Error.Packing(reason: "cannot convert argument to UInt")
                     }
                     
                 case .PackBool:
@@ -430,71 +404,71 @@ class CStruct: NSObject {
                             bytes.append(UInt8(0))
                         }
                     } else {
-                        return failure("cannot convert argument to Bool")
+                        throw Error.Packing(reason: "cannot convert argument to Bool")
                     }
                     
                 case .PackInt16:
                     if let value = rawValue as? Int {
                         if value >= -0x8000 && value <= 0x7fff {
                             padAlignment(2)
-                            bytes.extend(value.splitBytes(endianness, size: 2))
+                            bytes.appendContentsOf(value.splitBytes(endianness, size: 2))
                         } else {
-                            return failure("value outside valid range of Int16")
+                            throw Error.Packing(reason: "value outside valid range of Int16")
                         }
                     } else {
-                        return failure("cannot convert argument to Int")
+                        throw Error.Packing(reason: "cannot convert argument to Int")
                     }
                     
                 case .PackUInt16:
                     if let value = rawValue as? UInt {
                         if value > 0xffff {
-                            return failure("value outside valid range of UInt16")
+                            throw Error.Packing(reason: "value outside valid range of UInt16")
                         } else {
                             padAlignment(2)
-                            bytes.extend(value.splitBytes(endianness, size: 2))
+                            bytes.appendContentsOf(value.splitBytes(endianness, size: 2))
                         }
                     } else {
-                        return failure("cannot convert argument to UInt")
-                    }
+                        throw Error.Packing(reason: "cannot convert argument to UInt")
+					}
                     
                 case .PackInt32:
                     if let value = rawValue as? Int {
                         if value >= -0x80000000 && value <= 0x7fffffff {
                             padAlignment(4)
-                            bytes.extend(value.splitBytes(endianness, size: 4))
+                            bytes.appendContentsOf(value.splitBytes(endianness, size: 4))
                         } else {
-                            return failure("value outside valid range of Int32")
+                            throw Error.Packing(reason: "value outside valid range of Int32")
                         }
                     } else {
-                        return failure("cannot convert argument to Int")
+                        throw Error.Packing(reason: "cannot convert argument to Int")
                     }
                     
                 case .PackUInt32:
                     if let value = rawValue as? UInt {
                         if value > 0xffffffff {
-                            return failure("value outside valid range of UInt32")
+                            throw Error.Packing(reason: "value outside valid range of UInt32")
                         } else {
                             padAlignment(4)
-                            bytes.extend(value.splitBytes(endianness, size: 4))
+                            bytes.appendContentsOf(value.splitBytes(endianness, size: 4))
                         }
                     } else {
-                        return failure("cannot convert argument to UInt")
+                        throw Error.Packing(reason: "cannot convert argument to UInt")
                     }
                     
                 case .PackInt64:
                     if let value = rawValue as? Int {
                         padAlignment(8)
-                        bytes.extend(value.splitBytes(endianness, size: 8))
+                        bytes.appendContentsOf(value.splitBytes(endianness, size: 8))
                     } else {
-                        return failure("cannot convert argument to Int")
+                        throw Error.Packing(reason: "cannot convert argument to Int")
                     }
                     
                 case .PackUInt64:
                     if let value = rawValue as? UInt {
                         padAlignment(8)
-                        bytes.extend(value.splitBytes(endianness, size: 8))
+                        bytes.appendContentsOf(value.splitBytes(endianness, size: 8))
                     } else {
-                        return failure("cannot convert argument to UInt")
+                        throw Error.Packing(reason: "cannot convert argument to UInt")
                     }
                     
                 case .PackFloat, .PackDouble:
@@ -506,9 +480,9 @@ class CStruct: NSObject {
                 case .PackPointer:
                     if let value = rawValue as? UInt {
                         padAlignment(sizeof(UnsafePointer<UInt>))
-                        bytes.extend(value.splitBytes(endianness, size: sizeof(UnsafePointer<UInt>)))
+                        bytes.appendContentsOf(value.splitBytes(endianness, size: sizeof(UnsafePointer<UInt>)))
                     } else {
-                        return failure("cannot convert argument to UInt")
+                        throw Error.Packing(reason: "cannot convert argument to UInt")
                     }
                     
                 default:
@@ -523,21 +497,20 @@ class CStruct: NSObject {
         return NSData(bytes: bytes, length: bytes.count)
     }
     
-    func parseFormat(format: String, error: NSErrorPointer) -> Bool {
-        
-        var repeat = 0
+    func parseFormat(format: String) throws {
+        var repeatCount = 0
         
         opStream.removeAll(keepCapacity: false)
         
-        for c in format {
+        for c in format.characters {
             // First test if the format string contains an integer. In that case
             // we feed it into the repeat counter and go to the next character.
-            if let value = String(c).toInt() {
-                repeat = repeat * 10 + value
+            if let value = Int(String(c)) {
+                repeatCount = repeatCount * 10 + value
                 continue
             }
             // The next step depends on if we've accumulated a repeat count.
-            if repeat == 0 {
+            if repeatCount == 0 {
                 
                 // With a repeat count of 0 we check for control characters.
                 switch c {
@@ -563,14 +536,14 @@ class CStruct: NSObject {
                 default:
                     // No control character found so set the repeat count to 1
                     // and evaluate format characters.
-                    repeat = 1
+                    repeatCount = 1
                 }
             }
             
             // If we have a repeat count we expect a format character.
-            if repeat > 0 {
+            if repeatCount > 0 {
                 // Add one op for each repeat count.
-                for i in 0..<repeat {
+                for _ in 0..<repeatCount {
                     switch c {
                     case "x":       opStream.append(.SkipByte)
                     case "c":       opStream.append(.PackChar)
@@ -589,19 +562,13 @@ class CStruct: NSObject {
                     case "p":       opStream.append(.PackPString)
                     case "P":       opStream.append(.PackPointer)
                     default:
-                        if (error != nil) {
-                            error.memory = NSError(domain: ERROR_DOMAIN,
-                                code: Error.Parsing.rawValue,
-                                userInfo: [NSLocalizedDescriptionKey: "bad character in format"])
-                        }
-                        return false
+						throw Error.Parsing(reason: "bad character in format: \(c)")
                     }
                 }
             }
             // Reset the repeat counter.
-            repeat = 0
+            repeatCount = 0
         }
         opStream.append(.Stop)
-        return true
     }
 }
