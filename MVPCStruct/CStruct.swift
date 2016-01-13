@@ -80,11 +80,11 @@ extension UInt {
 }
 
 
-class CStruct: NSObject {
+public class CStruct {
 	
 	
 	
-    enum Error: ErrorType {
+    public enum Error: ErrorType {
         case Parsing(reason: String)
         case Packing(reason: String)
 		case Unpacking(reason: String)
@@ -155,7 +155,7 @@ class CStruct: NSObject {
     return .LittleEndian
     }
     
-    convenience init(format: String) throws {
+    public convenience init(format: String) throws {
         self.init()
 		
 		try self.parseFormat(format)
@@ -164,12 +164,12 @@ class CStruct: NSObject {
     
     // Unpacking.
     
-    func unpack(data: NSData, format: String) throws -> [AnyObject] {
+    public func unpack(data: NSData, format: String) throws -> [AnyObject] {
         try self.parseFormat(format)
         return try self.unpack(data)
     }
 
-    func unpack(data: NSData) throws -> [AnyObject] {
+    public func unpack(data: NSData) throws -> [AnyObject] {
         var values = [AnyObject]()
         var index = 0
         var alignment = true
@@ -304,12 +304,12 @@ class CStruct: NSObject {
     
     // Packing.
     
-    func pack(values: [AnyObject], format: String) throws -> NSData {
+    public func pack(values: [AnyObject], format: String) throws -> NSData {
         try self.parseFormat(format)
         return try self.pack(values)
     }
     
-    func pack(values: [AnyObject]) throws -> NSData {
+    public func pack(values: [AnyObject]) throws -> NSData {
         var bytes = [UInt8]()
         var index = 0
         var alignment = true
