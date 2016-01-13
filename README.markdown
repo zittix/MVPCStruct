@@ -1,5 +1,7 @@
 # C struct handling for Swift
 
+[![Carthage compatible](https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat)](https://github.com/Carthage/Carthage)
+
 Class for packing and unpacking C structs in Swift, modeled after the [struct](https://docs.python.org/2/library/struct.html) module in Python.
 
 ## Sample Code
