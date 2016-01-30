@@ -11,6 +11,7 @@ import MVPCStruct
 
 class PackTests: XCTestCase {
     var packer: CStruct = CStruct()
+    
     override func setUp() {
         packer = CStruct()
     }
@@ -48,9 +49,9 @@ class PackTests: XCTestCase {
             }
             return (0x02, 0x00)
         }()
+        let toPack = [1, 2]
 
         let signedInt16Data = NSData(bytes: [0x01, 0x00, firstStoredByte, lastStoredByte] as [UInt8], length: 4)
-        let toPack = [1, 2]
         XCTAssertNoThrowEqual(signedInt16Data, try packer.pack(toPack, format: "@BH"))
 
         let signedInt32Data = NSData(bytes: [0x01, 0x00, 0x00, 0x00, firstStoredByte, 0x00, 0x00, lastStoredByte] as [UInt8], length: 8)
