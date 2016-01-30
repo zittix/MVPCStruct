@@ -11,6 +11,7 @@
 		058E72B0194B3715002168A2 /* UnpackTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 058E72AF194B3715002168A2 /* UnpackTests.swift */; };
 		05A8B6C8194B1718006366DF /* MVPCStruct.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 05A8B6BC194B1718006366DF /* MVPCStruct.framework */; };
 		05A8B6D9194B1755006366DF /* CStruct.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05A8B6D8194B1755006366DF /* CStruct.swift */; };
+		3761E0741C5C49BA00E99252 /* XCTExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3761E0731C5C49BA00E99252 /* XCTExtensions.swift */; };
 		4BBF61AA1B7079F500821C5F /* CStruct.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05A8B6D8194B1755006366DF /* CStruct.swift */; };
 		4ED039551C466CA600F2B22D /* MVPCStruct.h in Sources */ = {isa = PBXBuildFile; fileRef = 4ED039541C466C9500F2B22D /* MVPCStruct.h */; };
 		4ED039561C466CC200F2B22D /* MVPCStruct.h in Headers */ = {isa = PBXBuildFile; fileRef = 4ED039541C466C9500F2B22D /* MVPCStruct.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -34,6 +35,7 @@
 		05A8B6C7194B1718006366DF /* MVPCStructTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MVPCStructTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		05A8B6CD194B1718006366DF /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		05A8B6D8194B1755006366DF /* CStruct.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CStruct.swift; sourceTree = "<group>"; };
+		3761E0731C5C49BA00E99252 /* XCTExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = XCTExtensions.swift; sourceTree = "<group>"; };
 		4ED039541C466C9500F2B22D /* MVPCStruct.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.objj.h; path = MVPCStruct.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -97,6 +99,7 @@
 			children = (
 				058E72AD194B36DD002168A2 /* PackTests.swift */,
 				058E72AF194B3715002168A2 /* UnpackTests.swift */,
+				3761E0731C5C49BA00E99252 /* XCTExtensions.swift */,
 				05A8B6CC194B1718006366DF /* Supporting Files */,
 			);
 			path = MVPCStructTests;
@@ -230,6 +233,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				058E72AE194B36DD002168A2 /* PackTests.swift in Sources */,
+				3761E0741C5C49BA00E99252 /* XCTExtensions.swift in Sources */,
 				058E72B0194B3715002168A2 /* UnpackTests.swift in Sources */,
 				4BBF61AA1B7079F500821C5F /* CStruct.swift in Sources */,
 			);
@@ -282,10 +286,10 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
-				MACOSX_DEPLOYMENT_TARGET = 10.9;
+				MACOSX_DEPLOYMENT_TARGET = 10.11;
 				METAL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
-				SDKROOT = iphoneos9.2;
+				SDKROOT = macosx;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
@@ -322,9 +326,9 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
-				MACOSX_DEPLOYMENT_TARGET = 10.9;
+				MACOSX_DEPLOYMENT_TARGET = 10.11;
 				METAL_ENABLE_DEBUG_INFO = NO;
-				SDKROOT = iphoneos9.2;
+				SDKROOT = macosx;
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
 			};
@@ -342,7 +346,6 @@
 				FRAMEWORK_VERSION = A;
 				INFOPLIST_FILE = MVPCStruct/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "se.automac.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -364,7 +367,6 @@
 				FRAMEWORK_VERSION = A;
 				INFOPLIST_FILE = MVPCStruct/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "se.automac.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -377,6 +379,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COMBINE_HIDPI_IMAGES = YES;
+				EMBEDDED_CONTENT_CONTAINS_SWIFT = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(DEVELOPER_FRAMEWORKS_DIR)",
 					"$(inherited)",
@@ -397,6 +400,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COMBINE_HIDPI_IMAGES = YES;
+				EMBEDDED_CONTENT_CONTAINS_SWIFT = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(DEVELOPER_FRAMEWORKS_DIR)",
 					"$(inherited)",
