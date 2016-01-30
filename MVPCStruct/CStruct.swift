@@ -40,7 +40,7 @@ import Foundation
 
 
 // Split a large integer into bytes.
-extension Int {
+private extension Int {
     func splitBytes(endianness: CStruct.Endianness, size: Int) -> [UInt8] {
         var bytes = [UInt8]()
         var shift: Int
@@ -59,7 +59,8 @@ extension Int {
         return bytes
     }
 }
-extension UInt {
+
+private extension UInt {
     func splitBytes(endianness: CStruct.Endianness, size: Int) -> [UInt8] {
         var bytes = [UInt8]()
         var shift: Int
@@ -81,9 +82,7 @@ extension UInt {
 
 
 public class CStruct {
-	
-	
-	
+
     public enum Error: ErrorType {
         case Parsing(reason: String)
         case Packing(reason: String)

@@ -10,16 +10,7 @@ import XCTest
 import MVPCStruct
 
 class PackTests: XCTestCase {
-	
-	override func setUp() {
-		super.setUp()
-	}
-	
-	override func tearDown() {
-		super.tearDown()
-	}
-	
-	func testBooleanPack() {
+    func testBooleanPack() {
 		
 		let packer = CStruct()
 		let booleanFacit = NSData(bytes: [0x01, 0x01, 0x00, 0x01] as [UInt8], length: 4)
