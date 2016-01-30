@@ -3,7 +3,6 @@
 //  MVPCStruct
 //
 //  Created by Riley Avron on 1/29/16.
-//  Copyright © 2016 ravron. All rights reserved.
 //
 
 import Foundation
@@ -23,9 +22,24 @@ func XCTAssertThrows<T>(@autoclosure expression: () throws -> T, _ message: Stri
     }
 }
 
-func XCTAssertNoThrow<T>(@autoclosure expression: () throws -> T, _ message: String = "", file: String = __FILE__, line: UInt = __LINE__) {
+func XCTAssertNoThrow<T>(@autoclosure expression: () throws -> T, _ message: String = "", file: String = __FILE__, line: UInt = __LINE__) -> T? {
     do {
-        try expression()
+        return try expression()
+    } catch let error {
+        var append = " - \(message)"
+        if message.isEmpty {
+            append = ""
+        }
+        XCTFail("Caught error: \(error)\(append)", file: file, line: line)
+        return nil
+    }
+}
+
+func XCTAssertNoThrowEqual<T: Equatable>(@autoclosure expression1: () -> T, @autoclosure _ expression2: () throws -> T, _ message: String = "", file: String = __FILE__, line: UInt = __LINE__) {
+    do {
+        let result1 = expression1()
+        let result2 = try expression2()
+        XCTAssertEqual(result1, result2, message, file: file, line: line)
     } catch let error {
         var append = " - \(message)"
         if message.isEmpty {
@@ -35,7 +49,7 @@ func XCTAssertNoThrow<T>(@autoclosure expression: () throws -> T, _ message: Str
     }
 }
 
-func XCTAssertNoThrowEqual<T : Equatable>(@autoclosure expression1: () -> T, @autoclosure _ expression2: () throws -> T, _ message: String = "", file: String = __FILE__, line: UInt = __LINE__) {
+func XCTAssertNoThrowEqual<T: Equatable>(@autoclosure expression1: () -> [T], @autoclosure _ expression2: () throws -> [T], _ message: String = "", file: String = __FILE__, line: UInt = __LINE__) {
     do {
         let result1 = expression1()
         let result2 = try expression2()
