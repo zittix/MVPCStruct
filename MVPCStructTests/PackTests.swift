@@ -22,7 +22,7 @@ class PackTests: XCTestCase {
 	func testBooleanPack() {
 		
 		let packer = CStruct()
-		let booleanFacit = NSData(bytes: [0x01, 0x01, 0x00, 0x01] as [UInt8], length: 4)
+		let booleanFacit = Data(bytes: UnsafePointer<UInt8>([0x01, 0x01, 0x00, 0x01] as [UInt8]), count: 4)
 		do {
 			let result = try packer.pack([true, true, false, true], format: "????")
 			XCTAssertEqual(result, booleanFacit)
@@ -32,7 +32,7 @@ class PackTests: XCTestCase {
 	}
 	
 	func testHello() {
-		let facit = "Hello".dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: false)
+		let facit = "Hello".data(using: String.Encoding.utf8, allowLossyConversion: false)
 		
 		let packer = CStruct()
 		do {
@@ -50,7 +50,7 @@ class PackTests: XCTestCase {
 	}
 	
 	func testInts() {
-		let signedFacit = NSData(bytes: [0xff, 0xfe, 0xff, 0xfd, 0xff, 0xff, 0xff, 0xfc, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff] as [UInt8], length: 15)
+		let signedFacit = Data(bytes: UnsafePointer<UInt8>([0xff, 0xfe, 0xff, 0xfd, 0xff, 0xff, 0xff, 0xfc, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff] as [UInt8]), count: 15)
 		let packer = CStruct()
 		do {
 			let result = try packer.pack([-1, -2, -3, -4], format: "<bhiq")
@@ -58,7 +58,7 @@ class PackTests: XCTestCase {
 		} catch {
 			XCTFail("result is nil")
 		}
-		let unsignedFacit = NSData(bytes: [0x01, 0x02, 0x00, 0x03, 0x00, 0x00, 0x00, 0x04, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00] as [UInt8], length: 15)
+		let unsignedFacit = Data(bytes: UnsafePointer<UInt8>([0x01, 0x02, 0x00, 0x03, 0x00, 0x00, 0x00, 0x04, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00] as [UInt8]), count: 15)
 		do {
 			let result = try packer.pack([1, 2, 3, 4], format: "<BHIQ")
 			XCTAssertEqual(unsignedFacit, result)
@@ -72,7 +72,7 @@ class PackTests: XCTestCase {
 		
 		let packer = CStruct()
 		
-		let signedFacit16 = NSData(bytes: [0x01, 0x00, 0x02, 0x00] as [UInt8], length: 4)
+		let signedFacit16 = Data(bytes: UnsafePointer<UInt8>([0x01, 0x00, 0x02, 0x00] as [UInt8]), count: 4)
 		do {
 			let result = try packer.pack([1, 2], format: "@BH")
 			XCTAssertEqual(signedFacit16, result)
@@ -80,7 +80,7 @@ class PackTests: XCTestCase {
 			XCTFail("result is nil")
 		}
 		
-		let signedFacit32 = NSData(bytes: [0x01, 0x00, 0x00, 0x00, 0x02, 0x00, 0x00, 0x00] as [UInt8], length: 8)
+		let signedFacit32 = Data(bytes: UnsafePointer<UInt8>([0x01, 0x00, 0x00, 0x00, 0x02, 0x00, 0x00, 0x00] as [UInt8]), count: 8)
 		do {
 			let result = try packer.pack([1, 2], format: "@BI")
 			XCTAssertEqual(signedFacit32, result)
@@ -88,7 +88,7 @@ class PackTests: XCTestCase {
 			XCTFail("result is nil")
 		}
 		
-		let signedFacit64 = NSData(bytes: [0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00] as [UInt8], length: 16)
+		let signedFacit64 = Data(bytes: UnsafePointer<UInt8>([0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00] as [UInt8]), count: 16)
 		do {
 			let result = try packer.pack([1, 2], format: "@BQ")
 			XCTAssertEqual(signedFacit64, result)
@@ -99,7 +99,7 @@ class PackTests: XCTestCase {
 	
 	func testBigEndian() {
 		
-		let facit = NSData(bytes: [0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e] as [UInt8], length: 14)
+		let facit = Data(bytes: UnsafePointer<UInt8>([0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e] as [UInt8]), count: 14)
 		
 		let packer = CStruct()
 		
