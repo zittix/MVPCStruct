@@ -446,13 +446,9 @@ open class CStruct {
                     }
                     
                 case .packUInt32:
-                    if let value = rawValue as? UInt {
-                        if value > 0xffffffff {
-                            throw ErrorCStruct.packing(reason: "value outside valid range of UInt32")
-                        } else {
-                            padAlignment(4)
-                            bytes.append(contentsOf: value.splitBytes(endianness, size: 4))
-                        }
+		    if let value = rawValue as? UInt {
+		        padAlignment(4)
+		        bytes.append(contentsOf: value.splitBytes(endianness, size: 4))
                     } else {
                         throw ErrorCStruct.packing(reason: "cannot convert argument to UInt")
                     }
